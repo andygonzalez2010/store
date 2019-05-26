@@ -50,6 +50,10 @@ public class Order implements Serializable {
         this.id = id;
     }
 
+    public Double getTotal() {
+        return item.getPrice() * quantity;
+    }
+
     public Integer getQuantity() {
         return quantity;
     }

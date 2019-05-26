@@ -1,5 +1,6 @@
 package com.store.service;
 
+import com.store.domain.Cart;
 import com.store.domain.User;
 
 import io.github.jhipster.config.JHipsterProperties;
@@ -28,6 +29,7 @@ public class MailService {
 
     private final Logger log = LoggerFactory.getLogger(MailService.class);
 
+    private static final String CART = "cart";
     private static final String USER = "user";
 
     private static final String BASE_URL = "baseUrl";
@@ -101,5 +103,14 @@ public class MailService {
     public void sendPasswordResetMail(User user) {
         log.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplate(user, "mail/passwordResetEmail", "email.reset.title");
+    }
+
+    public void sendTicket(Cart cart) {
+        log.debug("Sending ticket email to '{}'", cart.getEmail());
+        Context context = new Context();
+        context.setVariable(CART, cart);
+        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+        String content = templateEngine.process("mail/ticketEmail", context);
+        sendEmail(cart.getEmail(), "thanks for your order", content, false, true);
     }
 }

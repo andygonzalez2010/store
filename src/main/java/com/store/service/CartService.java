@@ -21,6 +21,14 @@ public interface CartService {
     CartDTO save(CartDTO cartDTO);
 
     /**
+     * Close a cart.
+     *
+     * @param cartDTO the entity to close.
+     * @return the persisted entity.
+     */
+    CartDTO close(CartDTO cartDTO);
+
+    /**
      * Get all the carts.
      *
      * @param pageable the pagination information.

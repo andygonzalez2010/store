@@ -3,6 +3,9 @@ package com.store.service;
 import com.store.config.Constants;
 
 import com.store.StoreApp;
+import com.store.domain.Cart;
+import com.store.domain.Item;
+import com.store.domain.Order;
 import com.store.domain.User;
 import io.github.jhipster.config.JHipsterProperties;
 import org.junit.jupiter.api.BeforeEach;
@@ -174,6 +177,20 @@ public class MailServiceIT {
         verify(javaMailSender).send(messageCaptor.capture());
         MimeMessage message = messageCaptor.getValue();
         assertThat(message.getAllRecipients()[0].toString()).isEqualTo(user.getEmail());
+        assertThat(message.getFrom()[0].toString()).isEqualTo("test@localhost");
+        assertThat(message.getContent().toString()).isNotEmpty();
+        assertThat(message.getDataHandler().getContentType()).isEqualTo("text/html;charset=UTF-8");
+    }
+
+    @Test
+    public void testSendTicketMail() throws Exception {
+        Item item = new Item().title("item").price(9.99).count(10);
+        Order order = new Order().item(item).quantity(2);
+        Cart cart = new Cart().email("john.doe@example.com").addOrder(order);
+        mailService.sendTicket(cart);
+        verify(javaMailSender).send(messageCaptor.capture());
+        MimeMessage message = messageCaptor.getValue();
+        assertThat(message.getAllRecipients()[0].toString()).isEqualTo(cart.getEmail());
         assertThat(message.getFrom()[0].toString()).isEqualTo("test@localhost");
         assertThat(message.getContent().toString()).isNotEmpty();
         assertThat(message.getDataHandler().getContentType()).isEqualTo("text/html;charset=UTF-8");

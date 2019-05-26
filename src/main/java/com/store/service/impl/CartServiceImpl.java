@@ -1,8 +1,12 @@
 package com.store.service.impl;
 
+import com.store.domain.Item;
+import com.store.domain.Order;
+import com.store.repository.ItemRepository;
 import com.store.service.CartService;
 import com.store.domain.Cart;
 import com.store.repository.CartRepository;
+import com.store.service.MailService;
 import com.store.service.dto.CartDTO;
 import com.store.service.mapper.CartMapper;
 import org.slf4j.Logger;
@@ -13,6 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,11 +31,16 @@ public class CartServiceImpl implements CartService {
 
     private final Logger log = LoggerFactory.getLogger(CartServiceImpl.class);
 
+    private final MailService mailService;
+    private final ItemRepository itemRepository;
+
     private final CartRepository cartRepository;
 
     private final CartMapper cartMapper;
 
-    public CartServiceImpl(CartRepository cartRepository, CartMapper cartMapper) {
+    public CartServiceImpl(MailService mailService, ItemRepository itemRepository, CartRepository cartRepository, CartMapper cartMapper) {
+        this.mailService = mailService;
+        this.itemRepository = itemRepository;
         this.cartRepository = cartRepository;
         this.cartMapper = cartMapper;
     }
@@ -42,8 +54,34 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartDTO save(CartDTO cartDTO) {
         log.debug("Request to save Cart : {}", cartDTO);
+        if (cartDTO.getClosedAt() == null) return close(cartDTO);
         Cart cart = cartMapper.toEntity(cartDTO);
         cart = cartRepository.save(cart);
+        return cartMapper.toDto(cart);
+    }
+
+    /**
+     * close a cart.
+     *
+     * @param cartDTO the entity to close.
+     * @return the persisted entity.
+     */
+    @Override
+    public CartDTO close(CartDTO cartDTO) {
+        log.debug("Request to close Cart : {}", cartDTO);
+        Cart cart = cartMapper.toEntity(cartDTO);
+        if (cart.getClosedAt() == null) {
+            List<Item> modified = new ArrayList<>();
+            for (Order order : cart.getOrders()) {
+                Item item = order.getItem();
+                item.setCount(item.getCount() - order.getQuantity());
+                modified.add(item);
+            }
+            itemRepository.saveAll(modified);
+            cart.setClosedAt(LocalDate.now());
+            cart = cartRepository.save(cart);
+            mailService.sendTicket(cart);
+        }
         return cartMapper.toDto(cart);
     }
 

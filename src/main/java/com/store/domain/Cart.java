@@ -50,6 +50,13 @@ public class Cart implements Serializable {
         this.id = id;
     }
 
+    public Double getTotal() {
+        Double total = 0.0;
+        for (Order order:orders)
+            total+=order.getTotal();
+        return total;
+    }
+
     public String getEmail() {
         return email;
     }

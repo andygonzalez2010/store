@@ -134,9 +134,9 @@ jhipster:
     description: store API documentation
     version: 0.0.1
     terms-of-service-url:
-    contact-name:
-    contact-url:
-    contact-email:
+    contact-name: Andy Gonzalez FLores
+    contact-url: https://fb.com/andy.gonzalezflores
+    contact-email: andy.gonzalez2010@gmail.com
     license:
     license-url:
 # ===================================================================

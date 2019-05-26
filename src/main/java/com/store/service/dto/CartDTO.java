@@ -17,7 +17,6 @@ public class CartDTO implements Serializable {
 
     private LocalDate closedAt;
 
-
     public Long getId() {
         return id;
     }
