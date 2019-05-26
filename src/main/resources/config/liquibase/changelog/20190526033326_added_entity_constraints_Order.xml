@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <!--
+        Added the constraints for entity Order.
+    -->
+    <changeSet id="20190526033326-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="cart_id"
+                                 baseTableName="store_order"
+                                 constraintName="fk_store_order_cart_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="store_cart"/>
+
+        <addForeignKeyConstraint baseColumnNames="item_id"
+                                 baseTableName="store_order"
+                                 constraintName="fk_store_order_item_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="store_item"/>
+
+    </changeSet>
+</databaseChangeLog>
