@@ -1,4 +1,5 @@
 package com.store.service.dto;
+import java.time.LocalDate;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -13,6 +14,8 @@ public class CartDTO implements Serializable {
     @NotNull
     @Pattern(regexp = "^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
     private String email;
+
+    private LocalDate closedAt;
 
 
     public Long getId() {
@@ -29,6 +32,14 @@ public class CartDTO implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDate getClosedAt() {
+        return closedAt;
+    }
+
+    public void setClosedAt(LocalDate closedAt) {
+        this.closedAt = closedAt;
     }
 
     @Override
@@ -57,6 +68,7 @@ public class CartDTO implements Serializable {
         return "CartDTO{" +
             "id=" + getId() +
             ", email='" + getEmail() + "'" +
+            ", closedAt='" + getClosedAt() + "'" +
             "}";
     }
 }

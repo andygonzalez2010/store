@@ -16,6 +16,7 @@
         "title": "Cart"
       },
       "email": "Email",
+      "closedAt": "Closed At",
       "order": "Order"
     }
   }

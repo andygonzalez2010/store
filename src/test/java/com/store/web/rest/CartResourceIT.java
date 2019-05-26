@@ -25,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import static com.store.web.rest.TestUtil.createFormattingConversionService;
@@ -41,6 +43,9 @@ public class CartResourceIT {
 
     private static final String DEFAULT_EMAIL = "*P@p";
     private static final String UPDATED_EMAIL = "W@G";
+
+    private static final LocalDate DEFAULT_CLOSED_AT = LocalDate.ofEpochDay(0L);
+    private static final LocalDate UPDATED_CLOSED_AT = LocalDate.now(ZoneId.systemDefault());
 
     @Autowired
     private CartRepository cartRepository;
@@ -93,7 +98,8 @@ public class CartResourceIT {
      */
     public static Cart createEntity(EntityManager em) {
         Cart cart = new Cart()
-            .email(DEFAULT_EMAIL);
+            .email(DEFAULT_EMAIL)
+            .closedAt(DEFAULT_CLOSED_AT);
         return cart;
     }
     /**
@@ -104,7 +110,8 @@ public class CartResourceIT {
      */
     public static Cart createUpdatedEntity(EntityManager em) {
         Cart cart = new Cart()
-            .email(UPDATED_EMAIL);
+            .email(UPDATED_EMAIL)
+            .closedAt(UPDATED_CLOSED_AT);
         return cart;
     }
 
@@ -130,6 +137,7 @@ public class CartResourceIT {
         assertThat(cartList).hasSize(databaseSizeBeforeCreate + 1);
         Cart testCart = cartList.get(cartList.size() - 1);
         assertThat(testCart.getEmail()).isEqualTo(DEFAULT_EMAIL);
+        assertThat(testCart.getClosedAt()).isEqualTo(DEFAULT_CLOSED_AT);
     }
 
     @Test
@@ -183,7 +191,8 @@ public class CartResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(cart.getId().intValue())))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())));
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
+            .andExpect(jsonPath("$.[*].closedAt").value(hasItem(DEFAULT_CLOSED_AT.toString())));
     }
     
     @Test
@@ -197,7 +206,8 @@ public class CartResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(cart.getId().intValue()))
-            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()));
+            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
+            .andExpect(jsonPath("$.closedAt").value(DEFAULT_CLOSED_AT.toString()));
     }
 
     @Test
@@ -241,6 +251,72 @@ public class CartResourceIT {
 
     @Test
     @Transactional
+    public void getAllCartsByClosedAtIsEqualToSomething() throws Exception {
+        // Initialize the database
+        cartRepository.saveAndFlush(cart);
+
+        // Get all the cartList where closedAt equals to DEFAULT_CLOSED_AT
+        defaultCartShouldBeFound("closedAt.equals=" + DEFAULT_CLOSED_AT);
+
+        // Get all the cartList where closedAt equals to UPDATED_CLOSED_AT
+        defaultCartShouldNotBeFound("closedAt.equals=" + UPDATED_CLOSED_AT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCartsByClosedAtIsInShouldWork() throws Exception {
+        // Initialize the database
+        cartRepository.saveAndFlush(cart);
+
+        // Get all the cartList where closedAt in DEFAULT_CLOSED_AT or UPDATED_CLOSED_AT
+        defaultCartShouldBeFound("closedAt.in=" + DEFAULT_CLOSED_AT + "," + UPDATED_CLOSED_AT);
+
+        // Get all the cartList where closedAt equals to UPDATED_CLOSED_AT
+        defaultCartShouldNotBeFound("closedAt.in=" + UPDATED_CLOSED_AT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCartsByClosedAtIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        cartRepository.saveAndFlush(cart);
+
+        // Get all the cartList where closedAt is not null
+        defaultCartShouldBeFound("closedAt.specified=true");
+
+        // Get all the cartList where closedAt is null
+        defaultCartShouldNotBeFound("closedAt.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllCartsByClosedAtIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        cartRepository.saveAndFlush(cart);
+
+        // Get all the cartList where closedAt greater than or equals to DEFAULT_CLOSED_AT
+        defaultCartShouldBeFound("closedAt.greaterOrEqualThan=" + DEFAULT_CLOSED_AT);
+
+        // Get all the cartList where closedAt greater than or equals to UPDATED_CLOSED_AT
+        defaultCartShouldNotBeFound("closedAt.greaterOrEqualThan=" + UPDATED_CLOSED_AT);
+    }
+
+    @Test
+    @Transactional
+    public void getAllCartsByClosedAtIsLessThanSomething() throws Exception {
+        // Initialize the database
+        cartRepository.saveAndFlush(cart);
+
+        // Get all the cartList where closedAt less than or equals to DEFAULT_CLOSED_AT
+        defaultCartShouldNotBeFound("closedAt.lessThan=" + DEFAULT_CLOSED_AT);
+
+        // Get all the cartList where closedAt less than or equals to UPDATED_CLOSED_AT
+        defaultCartShouldBeFound("closedAt.lessThan=" + UPDATED_CLOSED_AT);
+    }
+
+
+    @Test
+    @Transactional
     public void getAllCartsByOrderIsEqualToSomething() throws Exception {
         // Initialize the database
         Order order = OrderResourceIT.createEntity(em);
@@ -265,7 +341,8 @@ public class CartResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(cart.getId().intValue())))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)));
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)))
+            .andExpect(jsonPath("$.[*].closedAt").value(hasItem(DEFAULT_CLOSED_AT.toString())));
 
         // Check, that the count call also returns 1
         restCartMockMvc.perform(get("/api/carts/count?sort=id,desc&" + filter))
@@ -313,7 +390,8 @@ public class CartResourceIT {
         // Disconnect from session so that the updates on updatedCart are not directly saved in db
         em.detach(updatedCart);
         updatedCart
-            .email(UPDATED_EMAIL);
+            .email(UPDATED_EMAIL)
+            .closedAt(UPDATED_CLOSED_AT);
         CartDTO cartDTO = cartMapper.toDto(updatedCart);
 
         restCartMockMvc.perform(put("/api/carts")
@@ -326,6 +404,7 @@ public class CartResourceIT {
         assertThat(cartList).hasSize(databaseSizeBeforeUpdate);
         Cart testCart = cartList.get(cartList.size() - 1);
         assertThat(testCart.getEmail()).isEqualTo(UPDATED_EMAIL);
+        assertThat(testCart.getClosedAt()).isEqualTo(UPDATED_CLOSED_AT);
     }
 
     @Test

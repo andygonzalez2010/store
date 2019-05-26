@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -32,6 +33,9 @@ public class Cart implements Serializable {
     @Pattern(regexp = "^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
     @Column(name = "email", nullable = false)
     private String email;
+
+    @Column(name = "closed_at")
+    private LocalDate closedAt;
 
     @OneToMany(mappedBy = "cart")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -57,6 +61,19 @@ public class Cart implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDate getClosedAt() {
+        return closedAt;
+    }
+
+    public Cart closedAt(LocalDate closedAt) {
+        this.closedAt = closedAt;
+        return this;
+    }
+
+    public void setClosedAt(LocalDate closedAt) {
+        this.closedAt = closedAt;
     }
 
     public Set<Order> getOrders() {
@@ -106,6 +123,7 @@ public class Cart implements Serializable {
         return "Cart{" +
             "id=" + getId() +
             ", email='" + getEmail() + "'" +
+            ", closedAt='" + getClosedAt() + "'" +
             "}";
     }
 }

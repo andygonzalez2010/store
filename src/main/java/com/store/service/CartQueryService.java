@@ -92,6 +92,9 @@ public class CartQueryService extends QueryService<Cart> {
             if (criteria.getEmail() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getEmail(), Cart_.email));
             }
+            if (criteria.getClosedAt() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getClosedAt(), Cart_.closedAt));
+            }
             if (criteria.getOrderId() != null) {
                 specification = specification.and(buildSpecification(criteria.getOrderId(),
                     root -> root.join(Cart_.orders, JoinType.LEFT).get(Order_.id)));

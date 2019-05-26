@@ -106,6 +106,12 @@ export class CartUpdate extends React.Component<ICartUpdateProps, ICartUpdateSta
                     }}
                   />
                 </AvGroup>
+                <AvGroup>
+                  <Label id="closedAtLabel" for="cart-closedAt">
+                    <Translate contentKey="storeApp.cart.closedAt">Closed At</Translate>
+                  </Label>
+                  <AvField id="cart-closedAt" type="date" className="form-control" name="closedAt" />
+                </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/cart" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;

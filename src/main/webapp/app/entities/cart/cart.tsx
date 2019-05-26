@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Col, Row, Table } from 'reactstrap';
 // tslint:disable-next-line:no-unused-variable
-import { Translate, ICrudGetAllAction, getSortState, IPaginationBaseState } from 'react-jhipster';
+import { Translate, ICrudGetAllAction, TextFormat, getSortState, IPaginationBaseState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
@@ -93,6 +93,9 @@ export class Cart extends React.Component<ICartProps, ICartState> {
                   <th className="hand" onClick={this.sort('email')}>
                     <Translate contentKey="storeApp.cart.email">Email</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
+                  <th className="hand" onClick={this.sort('closedAt')}>
+                    <Translate contentKey="storeApp.cart.closedAt">Closed At</Translate> <FontAwesomeIcon icon="sort" />
+                  </th>
                   <th />
                 </tr>
               </thead>
@@ -105,6 +108,9 @@ export class Cart extends React.Component<ICartProps, ICartState> {
                       </Button>
                     </td>
                     <td>{cart.email}</td>
+                    <td>
+                      <TextFormat type="date" value={cart.closedAt} format={APP_LOCAL_DATE_FORMAT} />
+                    </td>
                     <td className="text-right">
                       <div className="btn-group flex-btn-group-container">
                         <Button tag={Link} to={`${match.url}/${cart.id}`} color="info" size="sm">

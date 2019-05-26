@@ -18,6 +18,11 @@
                 "pattern"
             ],
             "fieldValidateRulesPattern": "^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$"
+        },
+        {
+            "fieldName": "closedAt",
+            "fieldType": "LocalDate",
+            "fieldValidateRules": []
         }
     ],
     "changelogDate": "20190526032645",

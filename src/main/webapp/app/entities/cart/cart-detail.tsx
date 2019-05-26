@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
 // tslint:disable-next-line:no-unused-variable
-import { Translate, ICrudGetAction } from 'react-jhipster';
+import { Translate, ICrudGetAction, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
@@ -34,6 +34,14 @@ export class CartDetail extends React.Component<ICartDetailProps> {
               </span>
             </dt>
             <dd>{cartEntity.email}</dd>
+            <dt>
+              <span id="closedAt">
+                <Translate contentKey="storeApp.cart.closedAt">Closed At</Translate>
+              </span>
+            </dt>
+            <dd>
+              <TextFormat value={cartEntity.closedAt} type="date" format={APP_LOCAL_DATE_FORMAT} />
+            </dd>
           </dl>
           <Button tag={Link} to="/entity/cart" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

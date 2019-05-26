@@ -10,6 +10,7 @@ import io.github.jhipster.service.filter.FloatFilter;
 import io.github.jhipster.service.filter.IntegerFilter;
 import io.github.jhipster.service.filter.LongFilter;
 import io.github.jhipster.service.filter.StringFilter;
+import io.github.jhipster.service.filter.LocalDateFilter;
 
 /**
  * Criteria class for the {@link com.store.domain.Cart} entity. This class is used
@@ -28,6 +29,8 @@ public class CartCriteria implements Serializable, Criteria {
 
     private StringFilter email;
 
+    private LocalDateFilter closedAt;
+
     private LongFilter orderId;
 
     public CartCriteria(){
@@ -36,6 +39,7 @@ public class CartCriteria implements Serializable, Criteria {
     public CartCriteria(CartCriteria other){
         this.id = other.id == null ? null : other.id.copy();
         this.email = other.email == null ? null : other.email.copy();
+        this.closedAt = other.closedAt == null ? null : other.closedAt.copy();
         this.orderId = other.orderId == null ? null : other.orderId.copy();
     }
 
@@ -60,6 +64,14 @@ public class CartCriteria implements Serializable, Criteria {
         this.email = email;
     }
 
+    public LocalDateFilter getClosedAt() {
+        return closedAt;
+    }
+
+    public void setClosedAt(LocalDateFilter closedAt) {
+        this.closedAt = closedAt;
+    }
+
     public LongFilter getOrderId() {
         return orderId;
     }
@@ -81,6 +93,7 @@ public class CartCriteria implements Serializable, Criteria {
         return
             Objects.equals(id, that.id) &&
             Objects.equals(email, that.email) &&
+            Objects.equals(closedAt, that.closedAt) &&
             Objects.equals(orderId, that.orderId);
     }
 
@@ -89,6 +102,7 @@ public class CartCriteria implements Serializable, Criteria {
         return Objects.hash(
         id,
         email,
+        closedAt,
         orderId
         );
     }
@@ -98,6 +112,7 @@ public class CartCriteria implements Serializable, Criteria {
         return "CartCriteria{" +
                 (id != null ? "id=" + id + ", " : "") +
                 (email != null ? "email=" + email + ", " : "") +
+                (closedAt != null ? "closedAt=" + closedAt + ", " : "") +
                 (orderId != null ? "orderId=" + orderId + ", " : "") +
             "}";
     }
