@@ -1,5 +1,6 @@
 package com.store.web.rest;
 
+import com.store.security.AuthoritiesConstants;
 import com.store.service.OrderService;
 import com.store.web.rest.errors.BadRequestAlertException;
 import com.store.service.dto.OrderDTO;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
